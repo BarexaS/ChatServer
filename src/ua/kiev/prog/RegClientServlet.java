@@ -20,7 +20,10 @@ public class RegClientServlet extends HttpServlet {
         for (String line = ""; (line = reader.readLine()) != null; ) {
             sb.append(line);
         }
-        regList.addNewClient(Client.fromJSON(sb.toString()));
+        Client clt = Client.fromJSON(sb.toString());
+        clt.setStatus(true);
+        regList.addNewClient(clt);
+
     }
 
     @Override

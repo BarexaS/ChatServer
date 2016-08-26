@@ -44,7 +44,13 @@ public class RegisteredList {
     public String maptoString() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Client> entry : map.entrySet()) {
-            sb.append(entry.getKey() + " = " + entry.getValue().isStatus() + "\n");
+            sb.append(entry.getKey() + " = ");
+             if (entry.getValue().isStatus()) {
+              sb.append("Online");
+             } else {
+                 sb.append("Offline");
+             }
+             sb.append("\n");
         }
         return sb.toString();
     }
