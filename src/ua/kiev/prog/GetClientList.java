@@ -3,6 +3,7 @@ package ua.kiev.prog;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,14 @@ public class GetClientList extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getOutputStream().print(regList.maptoString());
+        for (Cookie c : req.getCookies()) {
+            if ("Session".equalsIgnoreCase(c.getName())){
+                if ("true".equalsIgnoreCase(c.getValue())){
+                    resp.getOutputStream().print(regList.maptoString());
+                } else {
+                    resp.getOutputStream().print("Please login");
+                }
+            }
+        }
     }
 }

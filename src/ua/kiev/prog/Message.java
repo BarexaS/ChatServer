@@ -10,12 +10,12 @@ import java.net.URL;
 import java.util.Date;
 
 public class Message {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Date date = new Date();
-    private String from;
-    private String to;
-    private String text;
+	private Date date = new Date();
+	private String from;
+	private String to;
+	private String text;
     private String roomName;
 
     public String getRoomName() {
@@ -27,69 +27,70 @@ public class Message {
     }
 
     public String toJSON() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
+		Gson gson = new GsonBuilder().create();
+		return gson.toJson(this);
+	}
+	
+	public static Message fromJSON(String s) {
+		Gson gson = new GsonBuilder().create();
+		return gson.fromJson(s, Message.class);
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder().append("[").append(date.toString())
+				.append(", From: ").append(from).append(", To: ").append(to)
+				.append("] ").append(text).toString();
+	}
 
-    public static Message fromJSON(String s) {
-        Gson gson = new GsonBuilder().create();
-        return gson.fromJson(s, Message.class);
-    }
+	public int send(String url, boolean session) throws IOException {
+		URL obj = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+		
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+		conn.setRequestProperty("Cookie","Session="+session);
+	
+		OutputStream os = conn.getOutputStream();
+		try {
+			String json = toJSON();
+			os.write(json.getBytes());
+			os.flush();
+			return conn.getResponseCode();
+		} finally {
+			os.close();
+		}
+	}
+	
+	public Date getDate() {
+		return date;
+	}
 
-    @Override
-    public String toString() {
-        return new StringBuilder().append("[").append(date.toString())
-                .append(", From: ").append(from).append(", To: ").append(to)
-                .append("] ").append(text).toString();
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public int send(String url) throws IOException {
-        URL obj = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+	public String getFrom() {
+		return from;
+	}
 
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
+	public void setFrom(String from) {
+		this.from = from;
+	}
 
-        OutputStream os = conn.getOutputStream();
-        try {
-            String json = toJSON();
-            os.write(json.getBytes());
-            os.flush();
-            return conn.getResponseCode();
-        } finally {
-            os.close();
-        }
-    }
+	public String getTo() {
+		return to;
+	}
 
-    public Date getDate() {
-        return date;
-    }
+	public void setTo(String to) {
+		this.to = to;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public String getText() {
+		return text;
+	}
 
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
+	public void setText(String text) {
+		this.text = text;
+	}
 }

@@ -1,8 +1,10 @@
 package ua.kiev.prog;
 
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,10 +23,13 @@ public class LoginInServlet extends HttpServlet {
         String login = is.readLine();
         String pass = is.readLine();
 
+
         if (regList.checkRegLogin(login)) { //Логин зарегистрирован
             Client clt = regList.checkRegPassword(login, pass); // Вернет клиента, если пароли совпали, если нет - null
             if ((clt) != null) {
-//            Отправляем gson Client зарегистрированного клиента
+//            Отправляем gson Client зарегистрированного клиента и куки
+
+                resp.addCookie(new Cookie("SessionId","true"));
                 clt.setStatus(true);
                 resp.getOutputStream().print("Welcome!!!" + "\n" + clt.toJSON());
             } else {

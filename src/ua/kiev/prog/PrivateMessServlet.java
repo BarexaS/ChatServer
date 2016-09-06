@@ -2,6 +2,7 @@ package ua.kiev.prog;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,18 @@ public class PrivateMessServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        for (Cookie c : req.getCookies()) {
+            if ("Session".equalsIgnoreCase(c.getName())){
+                if ("true".equalsIgnoreCase(c.getValue())){
+                    sessionOk(req, resp);
+                } else {
+                    resp.getOutputStream().print("Please login");
+                }
+            }
+        }
+    }
+
+    private void sessionOk(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BufferedReader reader = req.getReader();
         StringBuilder sb = new StringBuilder();
         for (String line = ""; (line = reader.readLine()) != null; ) {

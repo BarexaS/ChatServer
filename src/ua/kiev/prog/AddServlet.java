@@ -1,5 +1,6 @@
 package ua.kiev.prog;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,18 @@ public class AddServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
+        for (Cookie c : req.getCookies()) {
+            if ("Session".equalsIgnoreCase(c.getName())){
+                if ("true".equalsIgnoreCase(c.getValue())){
+                    sessionOk(req, resp);
+                } else {
+                    resp.getOutputStream().print("Please login");
+                }
+            }
+        }
+    }
 
+    private void sessionOk(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BufferedReader reader = req.getReader();
         StringBuilder sb = new StringBuilder();
         for (String line = ""; (line = reader.readLine()) != null; ) {
@@ -24,6 +36,5 @@ public class AddServlet extends HttpServlet {
             msgList.add(msg);
         else
             resp.setStatus(400); // Bad request
-
     }
 }
